@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "$id": "https://schema-registry.ga4gh.org/schemas/checksum/versions/v1.0.0.json",
+  "title": "Checksum",
+  "type": "object",
+  "$ref": "#/definitions/Checksum",
+  "definitions": {
+    "Checksum": {
+      "type": "object",
+      "properties": {
+        "checksum": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "md5",
+            "etag",
+            "crc32c",
+            "trunc512",
+            "sha-1",
+            "sha-256"
+          ]
+        }
+      },
+      "required": [
+        "checksum",
+        "type"
+      ]
+    }
+  }
+}
