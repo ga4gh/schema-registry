@@ -1,0 +1,55 @@
+site_name: Schema Registry Specification
+site_url: https://ga4gh.github.io/schema-registry
+repo_url: https://github.com/ga4gh/schema-registry
+nav:
+
+  - Specifications: 
+    - Schema registry: schema_registry_spec.md
+  - Reference:
+    - Decision record: decision_record.md
+    - Contributing: contributing.md
+
+
+copyright: GA4GH TASC, Schema Registry team
+home_link: null
+navbar:
+  left:
+  - text: Specification
+    icon: fa-file-alt
+    href: specification
+  - text: Decision record
+    icon: fa-history
+    href: decision_record
+  - text: Contributing
+    icon: fa-users
+    href: contributing
+
+theme:
+  name: material
+
+  features:
+    - header.autohide
+    - navigation.sections
+    - navigation.expand
+    - navigation.footer
+    # - navigation.indexes 
+    - toc.follow
+    - content.action.edit
+    - content.action.view
+    # - navigation.tabs
+    - navigation.top
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      use_pygments: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: "!!python/name:pymdownx.superfences.fence_code_format"
+  - toc:
+      toc_depth: 3
