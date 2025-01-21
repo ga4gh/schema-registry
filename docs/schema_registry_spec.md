@@ -39,6 +39,7 @@ To be added
 - **Namespace**: The name of a user or organization that owns schemas. Analogous to a github user or organization name. The namespace forms part of the registry path for a schema.
 - **Schema**: A document that defines the structure used to store or exchange data.
 - **Schema Registry**: A web location where schemas are stored.
+- **Semantic Version**: A string like, `MAJOR.MINOR.PATCH` (e.g. `0.4.3`) that uses following the semantic versioning standard, used to version a schema.
 - **Registry path**: A name used to identify a schema, consisting of the namespace and schema name, like `{namespace}/{schema_name}`. Analogous to a repository name on GitHub. Schema registry paths uniquely identify a particular schema within a given implementation/provider.
 
 
