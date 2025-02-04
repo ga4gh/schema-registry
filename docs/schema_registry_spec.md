@@ -45,7 +45,9 @@ To be added
 
 ## 1. API Specification
 
-### GET /schemas/{namespace}/?attr1=val1&lifecycle_stage=released
+### List schemas within a namespace
+
+**Endpoint:** `GET /schemas/{namespace}/?attr1=val1&lifecycle_stage=released`
 
 #### Params: 
 
@@ -74,7 +76,9 @@ Example:
 
 ---
 
-### GET /schemas/{namespace}/{schema_name}/versions
+### Get a list of versions for a given schema
+
+**Endpoint:** `GET /schemas/{namespace}/{schema_name}/versions`
 
 #### Params: 
 
@@ -104,7 +108,9 @@ Example:
 
 ---
 
-### GET /schemas/{namespace}/{schema_name}/versions/{semantic_version}
+### Get content of a schema
+
+**Endpoint:**  `GET /schemas/{namespace}/{schema_name}/versions/{semantic_version}`
 
 #### Params: 
 
@@ -120,7 +126,9 @@ If `{semantic_version} == "latest"`, this endpoint should return the maximum ver
 
 ---
 
-### GET /namespaces
+### Get a list of namespaces
+
+**Endpoint:** `GET /namespaces`
 
 #### Params:  
 
