@@ -1,0 +1,233 @@
+openapi: 3.0.3
+info:
+  title: GA4GH Schema Registry
+  version: 0.1.0
+  description: >
+    Allows browsing and querying for versioned JSON schema instances across namespaces.
+paths:
+  /namespaces:
+    get:
+      summary: Returns all namespaces hosted by this server
+      responses:
+        200:
+          $ref: '#/components/responses/NamespacesResponse'
+
+  /schemas/{namespace}/:
+    get:
+      summary: Returns a paginated list of schema metadata within the given namespace
+      description: >
+        Returns a paginated list of schemas under this namespace. The list can
+        be filtered using query parameters matching properties of the Schema object.
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The namespace containing the schemas.
+        - name: schema_name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Return only schemas with a matching `schema_name`.
+        - name: latest_version  # TODO Remove parameters but add examples in the description section. Add pagination.
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Return only schemas with a matching `latest_version`.
+        - name: maintainer
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Return only schemas with a matching `maintainer`.
+        - name: lifecycle_stage
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [released, draft, deprecated]
+          description: Return only schemas with a matching `lifecycle_stage`.
+      responses:
+        200:
+          $ref: '#/components/responses/SchemasResponse'
+
+  #TODO consider whether we want to paginate SchemaVersionResponse (paginating over versions, repeating SchemaRecord metadata on each page) or add a new endpoint for retrieving a SchemaRecord, keeping the versions endpoint for just the paginated version list
+
+  #TODO consider rules around changes to schema_name in order to preserve lineage and not break URLs of older versions when the schema is renamed over time
+  # ideas:
+  # 1. make schema_name immutable, and essentially create a new schema under a new name to continue with future versions
+  # 2. designate a special tag that can be used to refer back to the old schema name, or forward to the new schema name
+  # 3. serve redirects from the old name to the new name like GitHub does when you rename a repository
+  /schemas/{namespace}/{schema_name}/versions:
+    get:
+      summary: Returns the versions of a specific schema
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The namespace of the schema.
+        - name: schema_name
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The name of the schema.
+      responses:
+        200:
+          $ref: '#/components/responses/SchemaVersionsResponse'
+
+  /schemas/{namespace}/{schema_name}/versions/{semantic_version}:
+    get:
+      summary: Returns the JSON Schema document itself
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The namespace of the schema.
+        - name: schema_name
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The name of the schema.
+        - name: semantic_version
+          in: path
+          required: true
+          schema:
+            type: string
+          description: |
+            The semantic version. The special value `latest` is equivalent to specifying the same string as in the target schema's `latest_released_version` property.
+      responses:
+        200:
+          $ref: '#/components/responses/JSONSchemaResponse'
+
+components:
+  schemas:
+    Namespace:
+      type: object
+      properties:
+        namespace_name:
+          type: string
+          pattern: "[a-z-]+"
+          description: |
+            The identifier for the namespace. Uniquely identifies a namespace within a given instance of the schema registry, but not across registries. For example, `https://example.com/schemas/my-great-namespace` and `https://another.example/schemas/my-great-namespace` can both exist, and they refer to different namespaces.
+          example: cloud-workstream
+        contact_url:
+          type: string
+          format: uri
+          description: |
+            A reference for learning more about the namespace. Should provide enough information to contact the maintainers: it could be a `mailto:` link, a link to a project website, a GitHub project, issue tracking system, or similar.
+          example: https://github.com/example-org/example-project
+    SchemaRecord:
+      type: object
+      properties:
+        schema_name:
+          type: string
+          pattern: "[a-z-]+"
+          example: unit-of-measure
+        latest_released_version:
+          type: string
+          description: |
+            The latest version of this schema that currently exists in this repository, excluding any versions with pre-release tags.
+        maintainer:
+          type: array
+          items:
+            type: string
+        # TODO: change this to maturity_level and reference the GKS levels draft, trial_use, normative, deprecated as defined here https://vrs.ga4gh.org/en/2.0.0-ballot.2024-11/appendices/maturity_model.html#feature-maturity-levels
+        maturity_level:
+          type: string
+          enum: [draft, trial_use, normative, deprecated]
+          description: Metadata that applies across all versions of a schema
+    SchemaVersion:
+      type: object
+      properties:
+        version:
+          type: string
+          description: Immutable identifier for this schema version. Follows the [GA4GH GKS Maturity Model specification](https://vrs.ga4gh.org/en/2.0.0-ballot.2024-11/appendices/maturity_model.html).
+        status:
+          type: string
+          enum: [current, deprecated, latest]
+        release_date:
+          type: string
+          format: date-time
+        contributors:
+          type: array
+          items:
+            type: string
+        release_notes:
+          type: string
+        tags:
+          type: object
+          description: User-definable key/value pairs that provide additional information about this schema version.
+  responses:
+    SchemasResponse:
+      description: A list of schemas within the specified namespace.
+      # TODO result pagination
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              namespace:
+                type: string
+              schemas:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SchemaRecord'
+    SchemaVersionsResponse:
+      description: Schema versions with details.
+      # TODO result pagination
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              schema_name:
+                type: string
+              versions:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SchemaVersion'
+    JSONSchemaResponse:
+      description: The JSON Schema for the requested version.
+      content:
+        application/json:
+          schema:
+            type: object
+          example: |
+            {
+              "$id": "https://example.com/schemas/example-schema/versions/1.0.0",
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "title": "Example Schema",
+              "type": "object",
+              "properties": {
+                "foo": {
+                  "type": "string",
+                  "description": "An example property."
+                },
+                "bar": {
+                  "type": "string",
+                  "description": "Another example property."
+                }
+              }
+            }
+    NamespacesResponse:
+      description: A list of namespaces hosted by the server.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              server:
+                type: string
+              namespaces:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Namespace'
