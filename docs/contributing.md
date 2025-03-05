@@ -6,7 +6,7 @@ We welcome more participants! If you are interested in contributing, one of the 
 
 - Kathy Reinold
 - <a href="https://databio.org">Nathan Sheffield</a>, Department of Genome Sciences, University of Virginia
-- Jonathan Fuerth, DNA Stak
+- Jonathan Fuerth, DNAstack
 
 ## Contributors
 
@@ -16,9 +16,9 @@ We welcome more participants! If you are interested in contributing, one of the 
 
 ## Call info
 
-The community calls are held via zoom every other week. For information on schedule and zoom links, please contact the GA4GH Secretariat.
+The community calls are held via Zoom every other week. For information on schedule and Zoom links, please contact the GA4GH Secretariat.
 
 ## GA4GH info
 
-The sequence collections team is a sub-group of TASC. You can find more about workstreams and find the public minutes of all previous meetings at [GA4GH workstreams](https://www.ga4gh.org/how-we-work/workstreams/).
+The sequence collections team is a subgroup of TASC. You can find more about workstreams and find the public minutes of all previous meetings at [GA4GH workstreams](https://www.ga4gh.org/how-we-work/workstreams/).
 
