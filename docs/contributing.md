@@ -4,7 +4,7 @@ We welcome more participants! If you are interested in contributing, one of the 
 
 ## Maintainers
 
-- Kathy Reinhold
+- Kathy Reinold
 - <a href="https://databio.org">Nathan Sheffield</a>, Department of Genome Sciences, University of Virginia
 - Jonathan Fuerth, DNA Stak
 

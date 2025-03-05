@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: GA4GH Schema Registry
+  title: GA4GH Schema Registry API
   version: 0.1.0
   description: >
     Allows browsing and querying for versioned JSON schema instances across namespaces.
@@ -11,13 +11,13 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/NamespacesResponse'
-
   /schemas/{namespace}/:
     get:
       summary: Returns a paginated list of schema metadata within the given namespace
       description: >
         Returns a paginated list of schemas under this namespace. The list can
-        be filtered using query parameters matching properties of the Schema object.
+        be filtered using query parameters matching properties of the Schema object,
+        Such as `?schema_name=abcd` or `?maintainer=John+Doe`.
       parameters:
         - name: namespace
           in: path
@@ -31,6 +31,7 @@ paths:
           schema:
             type: string
           description: Return only schemas with a matching `schema_name`.
+          example: "unit-of-measure"
         - name: latest_version  # TODO Remove parameters but add examples in the description section. Add pagination.
           in: query
           required: false
