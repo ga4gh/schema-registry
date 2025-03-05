@@ -1,13 +1,12 @@
 site_name: Schema Registry Specification
 site_url: https://ga4gh.github.io/schema-registry
 repo_url: https://github.com/ga4gh/schema-registry
-nav:
 
-  - Specifications: 
-    - Schema registry: schema_registry_spec.md
-  - Reference:
-    - Decision record: decision_record.md
-    - Contributing: contributing.md
+nav:
+  - Introduction: README.md
+  - Specification: schema_registry_spec.md
+  - Decision record: decision_record.md
+  - Contributing: contributing.md
 
 
 copyright: GA4GH TASC, Schema Registry team
@@ -44,6 +43,7 @@ extra_css:
 
 markdown_extensions:
   - admonition
+  - pymdownx.details
   - pymdownx.highlight:
       use_pygments: true
   - pymdownx.superfences:
@@ -51,5 +51,12 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: "!!python/name:pymdownx.superfences.fence_code_format"
+  - pymdownx.tabbed:
+      alternate_style: true
   - toc:
       toc_depth: 3
+
+plugins:
+  - search
+  - neoteroi.mkdocsoad:
+      use_pymdownx: true
