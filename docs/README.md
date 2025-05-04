@@ -6,11 +6,11 @@ The GA4GH Schema registry specification provides a standard for representing and
 
 ## Can I see a demo?
 
-We are still developing the specification itself. Once the spec is developed, people will be able to implement independent services that conform to the specification. These services can then be used to share schemas.
+The specification itself is still under development.  Once the spec is developed, we anticipate independent implementations that conform to the specification will be available. These services can then be used to share schemas.
 
 ## Specification version
 
-This specification is in **DRAFT** form. This is **NOT YET AN APPROVED GA4GH specification**. 
+This specification is in **DRAFT** form. This is **NOT AN APPROVED GA4GH specification**. 
 
 ## Introduction
 
@@ -31,7 +31,7 @@ To be added
 ### General terms
 
 - **Namespace**: The name of a user or organization that owns schemas. Analogous to a github user or organization name. The namespace forms part of the registry path for a schema.
-- **Schema**: A document that defines the structure used to store or exchange data.
-- **Schema Registry**: A web location where schemas are stored.
-- **Semantic Version**: A string like, `MAJOR.MINOR.PATCH` (e.g. `0.4.3`) that uses following the semantic versioning standard, used to version a schema.
-- **Registry path**: A name used to identify a schema, consisting of the namespace and schema name, like `{namespace}/{schema_name}`. Analogous to a repository name on GitHub. Schema registry paths uniquely identify a particular schema within a given implementation/provider.
+- **Schema**: A document that defines the structure used to store or exchange data. It is often an implementation of a conceptual data model either implicitly or explicitly but usually includes optimizations/restrictions that are not relevant to the data model. 
+- **Schema Registry**: A resource on the web (URL) where a [GA4GH] community can find schemas that are in use within and/or recommended by the community.
+- **Semantic Version**: A string like, `MAJOR.MINOR.PATCH` (e.g. `0.4.3`) that uses following the [semantic versioning standard](https://semver.org/), used to version a schema.
+- **Registry path**: A name used to identify a schema, consisting of the namespace and schema name, like `{namespace}/{schema_name}`. Analogous to a repository name on GitHub. Schema registry paths uniquely identify a particular schema within a given Schema Registry.
