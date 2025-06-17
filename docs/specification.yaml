@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: GA4GH Schema Registry API
-  version: 0.1.0
+  version: 0.2.0
   description: >
     Allows browsing and querying for versioned JSON schema instances across namespaces.
 paths:
@@ -13,7 +13,7 @@ paths:
           $ref: '#/components/responses/NamespacesResponse'
   /schemas/{namespace}/:
     get:
-      summary: Returns a paginated list of schema metadata within the given namespace
+      summary: Returns the schemas in the given namespace
       description: >
         Returns a paginated list of schemas under this namespace. The list can
         be filtered using query parameters matching properties of the Schema object,
@@ -55,8 +55,6 @@ paths:
         200:
           $ref: '#/components/responses/SchemasResponse'
 
-  #TODO consider whether we want to paginate SchemaVersionResponse (paginating over versions, repeating SchemaRecord metadata on each page) or add a new endpoint for retrieving a SchemaRecord, keeping the versions endpoint for just the paginated version list
-
   #TODO consider rules around changes to schema_name in order to preserve lineage and not break URLs of older versions when the schema is renamed over time
   # ideas:
   # 1. make schema_name immutable, and essentially create a new schema under a new name to continue with future versions
@@ -64,7 +62,7 @@ paths:
   # 3. serve redirects from the old name to the new name like GitHub does when you rename a repository
   /schemas/{namespace}/{schema_name}/versions:
     get:
-      summary: Returns the versions of a specific schema
+      summary: Returns the versions of the given schema
       parameters:
         - name: namespace
           in: path
@@ -114,6 +112,9 @@ components:
     Namespace:
       type: object
       properties:
+        server:
+          type: string
+          description: The HTTP(S) URL of the schema registry server hosting this namespace.
         namespace_name:
           type: string
           pattern: "[a-z-]+"
@@ -133,6 +134,8 @@ components:
     SchemaRecord:
       type: object
       properties:
+        namespace:
+          type: string
         schema_name:
           type: string
           pattern: "[a-z-]+"
@@ -145,12 +148,12 @@ components:
           type: array
           items:
             type: string
-        # TODO: change this to maturity_level and reference the GKS levels draft, trial_use, normative, deprecated as defined here https://vrs.ga4gh.org/en/2.0.0-ballot.2024-11/appendices/maturity_model.html#feature-maturity-levels
         maturity_level:
           type: string
           enum: [ draft, trial_use, normative, deprecated ]
-          description: Metadata that applies across all versions of a schema
+          description: The maturity level of the schema, as defined by the [GA4GH GKS Maturity Model specification](https://vrs.ga4gh.org/en/2.0.0-ballot.2024-11/appendices/maturity_model.html).
       example:
+        namespace: bioinformatics-pipeline
         schema_name: sequencing-metadata
         latest_released_version: 2.0.1
         maintainer: [Fatima Al-Farsi, Miguel Santos]
@@ -159,6 +162,10 @@ components:
     SchemaVersion:
       type: object
       properties:
+        schema_name:
+          type: string
+          pattern: "[a-z-]+"
+          description: The name of the schema this version belongs to.
         version:
           type: string
           description: Immutable identifier for this schema version. Follows the [GA4GH GKS Maturity Model specification](https://vrs.ga4gh.org/en/2.0.0-ballot.2024-11/appendices/maturity_model.html).
@@ -187,66 +194,101 @@ components:
         release_notes: "Updated schema with additional metadata fields for improved annotation."
         tags:
           maturity_level: trial_use
+    PagedResponse:
+      description: A paginated response containing a list of items.
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+        pagination:
+          type: object
+          required: [page, page_size]
+          properties:
+            page:
+              type: integer
+              description: The current page number in the result set. Numbering starts at 0.
+            page_size:
+              type: integer
+              description: The specified number of records to return in a payload. Servers MAY return less than the page_size, even if it is not the last page.
+            total:
+              type: integer
+              description: The total number of results available in the result set.
+            total_pages:
+              type: integer
+              description: The total number of pages available.
 
   responses:
     SchemasResponse:
-      description: A list of schemas within the specified namespace.
-      # TODO result pagination
+      description: The schemas within the specified namespace.
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              namespace:
-                type: string
-              schemas:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SchemaRecord'
+            allOf:
+              - $ref: '#/components/schemas/PagedResponse'
+              - type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SchemaRecord'
           example:
-            namespace: bioinformatics-pipeline
-            schemas:
-              - schema_name: sequencing-metadata
+            pagination:
+              page: 0
+              page_size: 100000
+              total: 2
+              total_pages: 1
+            results:
+              - namespace: bioinformatics-pipeline
+                schema_name: sequencing-metadata
                 latest_released_version: 2.0.1
                 maintainer: [Fatima Al-Farsi, Miguel Santos]
                 maturity_level: trial_use
-              - schema_name: clinical-phenotypes
+              - namespace: bioinformatics-pipeline
+                schema_name: clinical-phenotypes
                 latest_released_version: 1.3.0
                 maintainer: [Adebayo Okafor]
                 maturity_level: normative
 
     SchemaVersionsResponse:
-      description: Schema versions with details.
-      # TODO result pagination
+      description: Available versions of a given schema.
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              schema_name:
-                type: string
-              versions:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SchemaVersion'
+            allOf:
+              - $ref: '#/components/schemas/PagedResponse'
+              - type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SchemaVersion'
           example:
-            schema_name: sequencing-metadata
-            versions:
-              - version: 1.0.1
+            pagination:
+              page: 0
+              page_size: 100000
+              total: 3
+              total_pages: 1
+            results:
+              - schema_name: sequencing-metadata
+                version: 1.0.1
                 status: current
                 release_date: 2023-11-20T00:00:00Z
                 contributors: [Fatima Al-Farsi, Miguel Santos, Adebayo Okafor]
                 release_notes: "Updated schema with additional metadata fields for improved annotation."
                 tags:
                   maturity_level: trial_use
-              - version: 1.0.0
+              - schema_name: sequencing-metadata
+                version: 1.0.0
                 status: deprecated
                 release_date: 2023-06-15T00:00:00Z
                 contributors: [Miguel Santos]
                 release_notes: "Initial trial-use release."
                 tags:
                   maturity_level: trial_use
-              - version: 0.9.1
+              - schema_name: sequencing-metadata
+                version: 0.9.1
                 status: latest
                 release_date: 2022-12-10T00:00:00Z
                 contributors: [Fatima Al-Farsi]
@@ -279,22 +321,28 @@ components:
             }
 
     NamespacesResponse:
-      description: A list of namespaces hosted by the server.
+      description: The namespaces hosted by the server.
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              server:
-                type: string
-              namespaces:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Namespace'
+            allOf:
+              - $ref: '#/components/schemas/PagedResponse'
+              - type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Namespace'
           example:
-            server: https://example.com/schemas
+            pagination:
+              page: 0
+              page_size: 100000
+              total: 2
+              total_pages: 1
             namespaces:
-              - namespace_name: bioinformatics-pipeline
+              - server: https://example.com/schemas
+                namespace_name: bioinformatics-pipeline
                 contact_url: https://github.com/genomics-lab/schema-registry
-              - namespace_name: clinical-data-exchange
+              - server: https://example.com/schemas
+                namespace_name: clinical-data-exchange
                 contact_url: https://github.com/hospital-group/clinical-data
