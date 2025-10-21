@@ -32,25 +32,25 @@ paths:
             type: string
           description: Return only schemas with a matching `schema_name`.
           example: "unit-of-measure"
-        - name: latest_version  # TODO Remove parameters but add examples in the description section. Add pagination.
+        - name: latest_released_version
           in: query
           required: false
           schema:
             type: string
-          description: Return only schemas with a matching `latest_version`.
+          description: Return only schemas with a matching `latest_released_version`.
         - name: maintainer
           in: query
           required: false
           schema:
             type: string
-          description: Return only schemas with a matching `maintainer`.
-        - name: lifecycle_stage
+          description: Return only schemas with a matching entry in their `maintainer` array.
+        - name: maturity_level
           in: query
           required: false
           schema:
             type: string
-            enum: [released, draft, deprecated]
-          description: Return only schemas with a matching `lifecycle_stage`.
+            enum: [draft, trial_use, normative, deprecated]
+          description: Return only schemas with a matching `maturity_level`.
       responses:
         200:
           $ref: '#/components/responses/SchemasResponse'
@@ -150,7 +150,7 @@ components:
             type: string
         maturity_level:
           type: string
-          enum: [ draft, trial_use, normative, deprecated ]
+          enum: [draft, trial_use, normative, deprecated]
           description: The maturity level of the schema, as defined by the [GA4GH GKS Maturity Model specification](https://vrs.ga4gh.org/en/2.0.0-ballot.2024-11/appendices/maturity_model.html).
       example:
         namespace: bioinformatics-pipeline
