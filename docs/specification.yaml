@@ -32,12 +32,6 @@ paths:
             type: string
           description: Return only schemas with a matching `schema_name`.
           example: "unit-of-measure"
-        - name: latest_released_version
-          in: query
-          required: false
-          schema:
-            type: string
-          description: Return only schemas with a matching `latest_released_version`.
         - name: maintainers
           in: query
           required: false
