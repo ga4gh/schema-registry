@@ -339,7 +339,7 @@ components:
               page_size: 100000
               total: 2
               total_pages: 1
-            namespaces:
+            results:
               - server: https://example.com/schemas
                 namespace_name: bioinformatics-pipeline
                 contact_url: https://github.com/genomics-lab/schema-registry
