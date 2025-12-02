@@ -17,7 +17,7 @@ paths:
       description: >
         Returns a paginated list of schemas under this namespace. The list can
         be filtered using query parameters matching properties of the Schema object,
-        Such as `?schema_name=abcd` or `?maintainer=John+Doe`.
+        Such as `?schema_name=abcd` or `?maintainers=John+Doe`.
       parameters:
         - name: namespace
           in: path
@@ -32,25 +32,25 @@ paths:
             type: string
           description: Return only schemas with a matching `schema_name`.
           example: "unit-of-measure"
-        - name: latest_version  # TODO Remove parameters but add examples in the description section. Add pagination.
+        - name: latest_released_version
           in: query
           required: false
           schema:
             type: string
-          description: Return only schemas with a matching `latest_version`.
-        - name: maintainer
+          description: Return only schemas with a matching `latest_released_version`.
+        - name: maintainers
           in: query
           required: false
           schema:
             type: string
-          description: Return only schemas with a matching `maintainer`.
-        - name: lifecycle_stage
+          description: Return only schemas with a matching entry in their `maintainers` array.
+        - name: maturity_level
           in: query
           required: false
           schema:
             type: string
-            enum: [released, draft, deprecated]
-          description: Return only schemas with a matching `lifecycle_stage`.
+            enum: [draft, trial_use, normative, deprecated]
+          description: Return only schemas with a matching `maturity_level`.
       responses:
         200:
           $ref: '#/components/responses/SchemasResponse'
@@ -144,7 +144,7 @@ components:
           type: string
           description: |
             The latest version of this schema that currently exists in this repository, excluding any versions with pre-release tags.
-        maintainer:
+        maintainers:
           type: array
           items:
             type: string
@@ -156,7 +156,7 @@ components:
         namespace: bioinformatics-pipeline
         schema_name: sequencing-metadata
         latest_released_version: 2.0.1
-        maintainer: [Fatima Al-Farsi, Miguel Santos]
+        maintainers: [Fatima Al-Farsi, Miguel Santos]
         maturity_level: trial_use
 
     SchemaVersion:
@@ -243,12 +243,12 @@ components:
               - namespace: bioinformatics-pipeline
                 schema_name: sequencing-metadata
                 latest_released_version: 2.0.1
-                maintainer: [Fatima Al-Farsi, Miguel Santos]
+                maintainers: [Fatima Al-Farsi, Miguel Santos]
                 maturity_level: trial_use
               - namespace: bioinformatics-pipeline
                 schema_name: clinical-phenotypes
                 latest_released_version: 1.3.0
-                maintainer: [Adebayo Okafor]
+                maintainers: [Adebayo Okafor]
                 maturity_level: normative
 
     SchemaVersionsResponse:
