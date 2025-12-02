@@ -11,7 +11,7 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/NamespacesResponse'
-  /schemas/{namespace}/:
+  /schemas/{namespace}:
     get:
       summary: Returns the schemas in the given namespace
       description: >
