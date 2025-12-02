@@ -150,7 +150,7 @@ components:
             type: string
         maturity_level:
           type: string
-          enum: [draft, trial_use, normative, deprecated]
+          enum: [ draft, trial_use, normative, deprecated ]
           description: The maturity level of the schema, as defined by the [GA4GH GKS Maturity Model specification](https://vrs.ga4gh.org/en/2.0.0-ballot.2024-11/appendices/maturity_model.html).
       example:
         namespace: bioinformatics-pipeline
